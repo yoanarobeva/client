@@ -1,4 +1,7 @@
 import './App.css';
+import { useEffect, useState } from 'react';
+
+import * as userService from './services/userService';
 
 import { Header } from './components/Header';
 import { Search } from './components/Search';
@@ -7,9 +10,18 @@ import { Pagination } from './components/Pagination';
 import { Footer } from './components/Footer';
 // import { UserDelete } from './components/UserDelete';
 // import { UserCreateEdit } from './components/CreateEdit';
-// import { UserDetails } from './components/UserDetails';
 
 function App() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    userService.getAll()
+      .then(setUsers)
+      .catch(err => {
+        console.log('Error' + err);
+      });
+  }, []);
+
   return (
     <>
       <Header />
@@ -21,7 +33,7 @@ function App() {
           <Search />
 
           {/* <!-- Table component --> */}
-          <Table />
+          <Table users={users} />
 
           {/* <!-- New user button  --> */}
           <button className="btn-add btn">Add new user</button>
@@ -31,8 +43,6 @@ function App() {
         </section>
 
         {/* <!-- User details component  --> */}
-        {/* <UserDetails /> */}
-
 
         {/* <!-- Create/Edit Form component  --> */}
         {/* <UserCreateEdit /> */}
