@@ -12,60 +12,75 @@ import { Footer } from './components/Footer';
 // import { UserCreateEdit } from './components/CreateEdit';
 
 function App() {
-  const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    userService.getAll()
-      .then(setUsers)
-      .catch(err => {
-        console.log('Error' + err);
-      });
-  }, []);
+    useEffect(() => {
+        userService.getAll()
+            .then(setUsers)
+            .catch(err => {
+                console.log('Error' + err);
+            });
+    }, []);
 
-  const onUserCreateSubmit = async (e) => {
-    e.preventDefault();
+    const onUserCreateSubmit = async (e) => {
+        e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData);
 
-    const createdUser = await userService.create(data);
+        //add on server
+        const createdUser = await userService.create(data);
 
-    setUsers(state => [...state, createdUser]);
-  };
+        //add on state
+        setUsers(state => [...state, createdUser]);
+    };
 
-  const onDeleteClick = async (userId) => {
-    // await userService.delete(userId);
-  };
+    const onUserDelete = async (userId) => {
+        //delete from server
+        await userService.remove(userId);
 
-  return (
-    <>
-      <Header />
+        //delete from state
+        setUsers(state => state.filter(x => x._id !== userId));
+    };
 
-      <main className="main">
+    const onUserUpdateSubmit = async (e) => {
+        e.preventDefault();
+        
+    };
 
-        <section className="card users-container">
+    return (
+        <>
+            <Header />
 
-          <Search />
+            <main className="main">
 
-          {/* <!-- Table component --> */}
-          <Table users={users} onUserCreateSubmit={onUserCreateSubmit} onDeleteClick={onDeleteClick} />
+                <section className="card users-container">
 
-          <Pagination />
+                    <Search />
 
-        </section>
-    
-        {/* <!-- Create/Edit Form component  --> */}
-        {/* <UserCreateEdit /> */}
+                    <Table 
+                        users={users} 
+                        onUserCreateSubmit={onUserCreateSubmit} 
+                        onUserDelete={onUserDelete}
+                        onUserUpdateSubmit={onUserUpdateSubmit} 
+                    />
 
-        {/* <!-- Delete user component  --> */}
-        {/* <UserDelete /> */}
+                    <Pagination />
 
-      </main>
+                </section>
 
-      <Footer />
+                {/* <!-- Create/Edit Form component  --> */}
+                {/* <UserCreateEdit /> */}
 
-    </>
-  );
+                {/* <!-- Delete user component  --> */}
+                {/* <UserDelete /> */}
+
+            </main>
+
+            <Footer />
+
+        </>
+    );
 }
 
 export default App;

@@ -3,6 +3,7 @@ import * as userService from '../services/userService';
 
 import { TableRow } from "./Table/TableRow";
 import { UserCreateEdit } from "./UserCreateEdit";
+import { UserDelete } from "./UserDelete";
 import { UserDetails } from "./UserDetails";
 
 // import { Spinner } from "./Table/Spinner";
@@ -13,9 +14,12 @@ import { UserDetails } from "./UserDetails";
 export const Table = ({
     users,
     onUserCreateSubmit,
-    onDeleteClick,
+    onUserDelete,
+    onUserUpdateSubmit,
 }) => {
     const [selectedUser, setSelectedUser] = useState(null);
+    const [showDeleteUser, setShowDeleteUser] = useState(null);
+    const [showEditUser, setShowEditUser] = useState(null);
     const [showAddUser, setShowAddUser] = useState(false);
 
     const onInfoButtonClick = async (userId) => {
@@ -29,6 +33,8 @@ export const Table = ({
     const onClose = () => {
         setSelectedUser(null);
         setShowAddUser(false);
+        setShowDeleteUser(null);
+        setShowEditUser(null);
     };
 
     const onUserAddClick = () => {
@@ -40,10 +46,28 @@ export const Table = ({
         setShowAddUser(false);
     };
 
+    const onDeleteClick = (userId) => {
+        setShowDeleteUser(userId);
+    };
+
+    const onDeleteHandler = () => {
+        onUserDelete(showDeleteUser);
+        onClose();
+    };
+
+    const onEditClick = async (userId) => {
+        const user = await userService.getOne(userId);
+
+        setShowEditUser(user);
+    };
+
+
     return (
         <>
             {selectedUser && <UserDetails {...selectedUser} onClose={onClose} />}
             {showAddUser && <UserCreateEdit onClose={onClose} onUserCreateSubmit={onUserCreateSubmitHandler} />}
+            {showDeleteUser && <UserDelete onDelete={onDeleteHandler} onClose={onClose} />}
+            {showEditUser && <UserCreateEdit user={showEditUser} onClose={onClose} onUserCreateSubmit={onUserUpdateSubmit} />}
 
             <div className="table-wrapper">
 
@@ -121,8 +145,15 @@ export const Table = ({
                     </thead>
                     <tbody>
 
-                        {users.map(u => <TableRow key={u._id} {...u} onInfoButtonClick={onInfoButtonClick} onDeleteClick={onDeleteClick} />)}
-
+                        {users.map(u => 
+                            <TableRow 
+                                key={u._id} 
+                                {...u} 
+                                onInfoButtonClick={onInfoButtonClick} 
+                                onDeleteClick={onDeleteClick} 
+                                onEditClick={onEditClick}
+                            />
+                        )}
 
                     </tbody>
                 </table>
