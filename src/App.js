@@ -43,9 +43,18 @@ function App() {
         setUsers(state => state.filter(x => x._id !== userId));
     };
 
-    const onUserUpdateSubmit = async (e) => {
+    const onUserUpdateSubmit = async (e, userId) => {
         e.preventDefault();
         
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData);
+
+        //update on server
+        const updatedUser = await userService.update(userId, data);
+
+        //update state
+        setUsers(state => state.map(x => x._id === userId ? updatedUser : x));
+
     };
 
     return (

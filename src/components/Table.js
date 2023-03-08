@@ -46,6 +46,11 @@ export const Table = ({
         setShowAddUser(false);
     };
 
+    const onUserUpdateSubmitHandler = (e, userId) => {
+        onUserUpdateSubmit(e, userId);
+        setShowEditUser(null);
+    }
+
     const onDeleteClick = (userId) => {
         setShowDeleteUser(userId);
     };
@@ -67,7 +72,7 @@ export const Table = ({
             {selectedUser && <UserDetails {...selectedUser} onClose={onClose} />}
             {showAddUser && <UserCreateEdit onClose={onClose} onUserCreateSubmit={onUserCreateSubmitHandler} />}
             {showDeleteUser && <UserDelete onDelete={onDeleteHandler} onClose={onClose} />}
-            {showEditUser && <UserCreateEdit user={showEditUser} onClose={onClose} onUserCreateSubmit={onUserUpdateSubmit} />}
+            {showEditUser && <UserCreateEdit user={showEditUser} onClose={onClose} onUserCreateSubmit={onUserUpdateSubmitHandler} />}
 
             <div className="table-wrapper">
 
@@ -147,8 +152,8 @@ export const Table = ({
 
                         {users.map(u => 
                             <TableRow 
-                                key={u._id} 
                                 {...u} 
+                                key={u._id} 
                                 onInfoButtonClick={onInfoButtonClick} 
                                 onDeleteClick={onDeleteClick} 
                                 onEditClick={onEditClick}
