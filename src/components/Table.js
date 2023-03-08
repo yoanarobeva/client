@@ -2,6 +2,7 @@ import { useState } from "react";
 import * as userService from '../services/userService';
 
 import { TableRow } from "./Table/TableRow";
+import { UserCreateEdit } from "./UserCreateEdit";
 import { UserDetails } from "./UserDetails";
 
 // import { Spinner } from "./Table/Spinner";
@@ -11,39 +12,57 @@ import { UserDetails } from "./UserDetails";
 
 export const Table = ({
     users,
+    onUserCreateSubmit,
+    onDeleteClick,
 }) => {
     const [selectedUser, setSelectedUser] = useState(null);
+    const [showAddUser, setShowAddUser] = useState(false);
 
     const onInfoButtonClick = async (userId) => {
         const user = await userService.getOne(userId);
-        
+
         setSelectedUser(user);
 
         console.log('clicked');
     };
 
+    const onClose = () => {
+        setSelectedUser(null);
+        setShowAddUser(false);
+    };
+
+    const onUserAddClick = () => {
+        setShowAddUser(true)
+    };
+
+    const onUserCreateSubmitHandler = (e) => {
+        onUserCreateSubmit(e);
+        setShowAddUser(false);
+    };
+
     return (
         <>
-            {selectedUser && <UserDetails {...selectedUser}/>}
+            {selectedUser && <UserDetails {...selectedUser} onClose={onClose} />}
+            {showAddUser && <UserCreateEdit onClose={onClose} onUserCreateSubmit={onUserCreateSubmitHandler} />}
 
             <div className="table-wrapper">
 
                 {/* <!-- Overlap components  --> */}
-                <div className="loading-shade">
+                {/* <div className="loading-shade"> */}
 
-                    {/* <!-- Loading spinner  --> */}
-                    {/* <Spinner /> */}
+                {/* <!-- Loading spinner  --> */}
+                {/* <Spinner /> */}
 
-                    {/* <!-- No users added yet  --> */}
-                    {/* <NoUsers /> */}
+                {/* <!-- No users added yet  --> */}
+                {/* <NoUsers /> */}
 
-                    {/* <!-- No content overlap component  --> */}
-                    {/* <NoContent /> */}
+                {/* <!-- No content overlap component  --> */}
+                {/* <NoContent /> */}
 
-                    {/* <!-- On error overlap component  --> */}
-                    {/* <FetchFailed /> */}
+                {/* <!-- On error overlap component  --> */}
+                {/* <FetchFailed /> */}
 
-                </div>
+                {/* </div> */}
 
                 <table className="table">
                     <thead>
@@ -102,12 +121,15 @@ export const Table = ({
                     </thead>
                     <tbody>
 
-                        {users.map(u => <TableRow key={u._id} {...u} onInfoButtonClick={onInfoButtonClick} />)}
+                        {users.map(u => <TableRow key={u._id} {...u} onInfoButtonClick={onInfoButtonClick} onDeleteClick={onDeleteClick} />)}
 
 
                     </tbody>
                 </table>
             </div>
+
+            {/* <!-- New user button  --> */}
+            <button className="btn-add btn" onClick={onUserAddClick}>Add new user</button>
         </>
     );
 };

@@ -22,6 +22,21 @@ function App() {
       });
   }, []);
 
+  const onUserCreateSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+
+    const createdUser = await userService.create(data);
+
+    setUsers(state => [...state, createdUser]);
+  };
+
+  const onDeleteClick = async (userId) => {
+    // await userService.delete(userId);
+  };
+
   return (
     <>
       <Header />
@@ -33,20 +48,14 @@ function App() {
           <Search />
 
           {/* <!-- Table component --> */}
-          <Table users={users} />
-
-          {/* <!-- New user button  --> */}
-          <button className="btn-add btn">Add new user</button>
+          <Table users={users} onUserCreateSubmit={onUserCreateSubmit} onDeleteClick={onDeleteClick} />
 
           <Pagination />
 
         </section>
-
-        {/* <!-- User details component  --> */}
-
+    
         {/* <!-- Create/Edit Form component  --> */}
         {/* <UserCreateEdit /> */}
-
 
         {/* <!-- Delete user component  --> */}
         {/* <UserDelete /> */}
